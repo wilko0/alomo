@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#191d4a">
+<title>Alomo</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+  /* Farben aus dem Alomo-Icon: Nachtblau und Oliv, Gold, Creme, Stahl und Salbei */
+  :root {
+    --navy: #191d4a; --navy-2: #252b66; --olive: #4a5a35; --olive-2: #5f7144;
+    --gold: #e0b950; --gold-2: #cb9e39; --cream: #efe6cc; --steel: #6f7c92; --sage: #77866a; --trace: #d9f3f7;
+    --bg: #eceeed; --card: #ffffff; --text: #232a36; --muted: #5a6270; --line: #d9ddd8; --ok: #4a6b2a; --bad: #b3261e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #10132c; --card: #1a1f45; --text: #eef0f4; --muted: #b0b6c7; --line: #2d3466; --ok: #a9c97f; --bad: #ff8a80; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .serif { font-family: Georgia, "Times New Roman", "DejaVu Serif", serif; }
+  header { position: relative; overflow: hidden; color: #fff; text-align: center; padding: 40px 16px 80px;
+           background: linear-gradient(90deg, var(--navy) 0 50%, var(--olive) 50% 100%); }
+  header::before { content: ""; position: absolute; inset: 0;
+           background: radial-gradient(circle at 50% 38%, rgba(232,251,255,.28), rgba(232,251,255,0) 58%); }
+  header svg.traces { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .28; }
+  header .inner { position: relative; }
+  header img { width: 104px; height: 104px; border-radius: 24%;
+               box-shadow: 0 0 0 3px rgba(224,185,80,.65), 0 12px 32px rgba(0,0,0,.4); }
+  header h1 { margin: 16px 0 4px; font-size: 40px; font-weight: 700; color: var(--cream); letter-spacing: .5px; }
+  header p { margin: 0; color: #dfe4ea; }
+  main { max-width: 560px; margin: -52px auto 0; padding: 0 16px 40px; position: relative; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 22px;
+          margin-bottom: 16px; box-shadow: 0 6px 24px rgba(25,29,74,.10); }
+  h2 { margin: 0 0 14px; font-size: 22px; font-family: Georgia, "Times New Roman", serif; }
+  .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;
+         padding: 15px 18px; border-radius: 14px; border: 0; font: inherit; font-weight: 600; font-size: 17px;
+         text-decoration: none; cursor: pointer; }
+  .btn.primary { background: linear-gradient(180deg, var(--gold), var(--gold-2)); color: var(--navy);
+                 box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 2px 8px rgba(203,158,57,.35); }
+  .btn.primary:active { filter: brightness(.92); }
+  .btn.secondary { background: transparent; color: var(--text); border: 2px solid var(--sage); }
+  @media (prefers-color-scheme: dark) { .btn.secondary { border-color: var(--olive-2); } }
+  .btn svg { width: 22px; height: 22px; flex: none; }
+  ol.steps { list-style: none; counter-reset: s; padding: 0; margin: 0; }
+  ol.steps > li { counter-increment: s; position: relative; padding: 0 0 18px 48px; }
+  ol.steps > li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 34px; height: 34px;
+         border-radius: 50%; color: var(--gold); font-weight: 700; display: grid; place-items: center;
+         font-family: Georgia, serif; box-shadow: 0 0 0 2px var(--gold-2);
+         background: linear-gradient(90deg, var(--navy) 0 50%, var(--olive) 50% 100%); }
+  ol.steps > li:last-child { padding-bottom: 0; }
+  .step-title { font-weight: 600; margin-bottom: 8px; padding-top: 5px; }
+  .muted { color: var(--muted); font-size: 14px; }
+  .invite-who { border-left: 4px solid var(--gold-2); background: rgba(224,185,80,.13);
+                border-radius: 10px; padding: 10px 14px; margin-bottom: 18px; }
+  .done { color: var(--ok); font-weight: 600; }
+  .warn { color: var(--bad); font-weight: 600; }
+  details { border-top: 1px solid var(--line); padding: 12px 0; }
+  details:first-of-type { border-top: 0; padding-top: 0; }
+  summary { cursor: pointer; font-weight: 600; }
+  summary::marker { color: var(--gold-2); }
+  details p { margin: 8px 0 0; color: var(--muted); }
+  footer { text-align: center; color: var(--muted); font-size: 13px; padding: 8px 16px 32px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <svg class="traces" viewBox="0 0 400 220" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+    <g fill="none" stroke="#d9f3f7" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M161 34L152 20L112 20"/><circle cx="112" cy="20" r="3"/><path d="M140 50L119 34L44 34"/><circle cx="44" cy="34" r="3"/><path d="M127 71L91 59L51 59"/><circle cx="51" cy="59" r="3"/><path d="M122 95L104 95L29 95"/><circle cx="29" cy="95" r="3"/><path d="M127 119L100 128L60 128"/><circle cx="60" cy="128" r="3"/><path d="M140 140L111 162L36 162"/><circle cx="36" cy="162" r="3"/><path d="M161 156L152 170L112 170"/><circle cx="112" cy="170" r="3"/><path d="M239 34L248 20L288 20"/><circle cx="288" cy="20" r="3"/><path d="M260 50L281 34L356 34"/><circle cx="356" cy="34" r="3"/><path d="M273 71L309 59L349 59"/><circle cx="349" cy="59" r="3"/><path d="M278 95L296 95L371 95"/><circle cx="371" cy="95" r="3"/><path d="M273 119L300 128L340 128"/><circle cx="340" cy="128" r="3"/><path d="M260 140L289 162L364 162"/><circle cx="364" cy="162" r="3"/><path d="M239 156L248 170L288 170"/><circle cx="288" cy="170" r="3"/></g>
+  </svg>
+  <div class="inner">
+    <img src="icon-512.png" alt="">
+    <h1 class="serif">Alomo</h1>
+    <p>Die Tür-App für Familie und Freunde</p>
+  </div>
+</header>
+
+<main>
+  <!-- Mit Einladung im Link -->
+  <section class="card" id="invite" hidden>
+    <h2>Sie sind eingeladen</h2>
+    <div class="invite-who" id="invite-who"></div>
+    <ol class="steps">
+      <li>
+        <div class="step-title">App herunterladen und installieren</div>
+        <a class="btn primary download" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 20h16"/></svg>
+          Alomo herunterladen
+        </a>
+        <p class="muted">Danach die Datei öffnen und installieren. Bei Warnungen siehe „Hilfe zur Installation“ unten.</p>
+      </li>
+      <li>
+        <div class="step-title">Einladung kopieren</div>
+        <button class="btn secondary" id="copy">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          Einladung kopieren
+        </button>
+        <p class="muted" id="copy-status"></p>
+      </li>
+      <li>
+        <div class="step-title">Alomo öffnen und „Einladung einfügen“ antippen</div>
+        <p class="muted">Danach den Fingerabdruck erzeugen lassen und kurz die Person anrufen, die Sie eingeladen hat. Sie vergleicht den angezeigten Fingerabdruck und schaltet Sie frei.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- Ohne Einladung -->
+  <section class="card" id="plain">
+    <h2>App herunterladen</h2>
+    <a class="btn primary download" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 20h16"/></svg>
+      Alomo für Android herunterladen
+    </a>
+    <p class="muted">Für Android 10 und neuer. Zum Öffnen der Tür brauchen Sie zusätzlich eine persönliche Einladung.</p>
+  </section>
+
+  <section class="card">
+    <h2>Hilfe zur Installation</h2>
+    <details>
+      <summary>„Installation aus unbekannten Quellen“</summary>
+      <p>Android fragt beim ersten Mal, ob Ihr Browser Apps installieren darf. Auf „Einstellungen“ tippen,
+         „Aus dieser Quelle zulassen“ einschalten und zurückgehen.</p>
+    </details>
+    <details>
+      <summary>„App nicht geprüft“ oder Warnung von Play Protect</summary>
+      <p>Alomo kommt nicht aus dem Play Store, deshalb kennt Google sie nicht. Auf „Weitere Details“ und dann
+         „Trotzdem installieren“ tippen.</p>
+    </details>
+    <details>
+      <summary>Neue Version installieren</summary>
+      <p>Diese Seite öffnen, herunterladen und installieren. Ihre Einrichtung und Ihr Schlüssel bleiben erhalten.
+         Bitte die App dafür nicht vorher deinstallieren, sonst ist eine neue Einladung nötig.</p>
+    </details>
+    <details>
+      <summary>iPhone</summary>
+      <p>Alomo gibt es nur für Android.</p>
+    </details>
+    <details>
+      <summary>Was passiert mit meiner Einladung?</summary>
+      <p>Die Einladung steht hinter dem #-Zeichen im Link. Dieser Teil bleibt in Ihrem Browser und wird nicht an
+         GitHub oder sonst jemanden gesendet. Die Seite lädt nichts von anderen Servern nach. Nach der Freischaltung
+         legt die App ein eigenes Passwort fest, danach ist die Einladung wertlos.</p>
+    </details>
+  </section>
+</main>
+
+<footer>Privates Projekt. Zugang nur mit persönlicher Einladung.</footer>
+
+<script>
+(function () {
+  'use strict';
+  var APK = 'https://github.com/wilko0/alomo/releases/latest/download/alomo.apk';
+  var PREFIX = 'door-invite:v1:';
+  var links = document.querySelectorAll('a.download');
+  for (var i = 0; i < links.length; i++) links[i].href = APK;
+
+  var raw = '';
+  try { raw = decodeURIComponent(location.hash.slice(1)); } catch (e) { raw = location.hash.slice(1); }
+  if (raw.indexOf(PREFIX) !== 0) return;
+  var token = raw.replace(/[^A-Za-z0-9:_-]/g, '');
+
+  // Einladung aus der Adresszeile entfernen: So landet sie nicht in Lesezeichen oder geteilten Links.
+  try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+
+  // Nur Name und Ablauf anzeigen, das Passwort nie.
+  var info = null;
+  try {
+    var b64 = token.slice(PREFIX.length).replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+    var bytes = atob(b64), json = '';
+    for (var j = 0; j < bytes.length; j++) json += '%' + ('0' + bytes.charCodeAt(j).toString(16)).slice(-2);
+    info = JSON.parse(decodeURIComponent(json));
+  } catch (e) { info = null; }
+  if (!info || typeof info.user !== 'string') return;
+
+  document.getElementById('plain').hidden = true;
+  document.getElementById('invite').hidden = false;
+  var who = document.getElementById('invite-who');
+  var line = document.createElement('div');
+  line.textContent = 'Nutzername: ' + info.user;
+  who.appendChild(line);
+  if (typeof info.exp === 'string') {
+    var exp = new Date(info.exp);
+    var until = document.createElement('div');
+    if (!isNaN(exp)) {
+      var text = exp.toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' });
+      if (exp < new Date()) {
+        until.className = 'warn';
+        until.textContent = 'Abgelaufen am ' + text + '. Bitte um eine neue Einladung bitten.';
+      } else {
+        until.textContent = 'Gültig bis ' + text;
+      }
+      who.appendChild(until);
+    }
+  }
+
+  var status = document.getElementById('copy-status');
+  document.getElementById('copy').addEventListener('click', function () {
+    function ok() { status.className = 'muted done'; status.textContent = 'Kopiert. Jetzt Alomo öffnen.'; }
+    function fallback() {
+      var area = document.createElement('textarea');
+      area.value = token; area.setAttribute('readonly', ''); area.style.position = 'fixed'; area.style.opacity = '0';
+      document.body.appendChild(area); area.select();
+      var done = false;
+      try { done = document.execCommand('copy'); } catch (e) { done = false; }
+      document.body.removeChild(area);
+      if (done) { ok(); } else { status.className = 'muted warn'; status.textContent = 'Kopieren nicht möglich. Bitte die ganze Nachricht mit dem Link kopieren.'; }
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(token).then(ok, fallback);
+    } else {
+      fallback();
+    }
+  });
+})();
+</script>
+</body>
+</html>
